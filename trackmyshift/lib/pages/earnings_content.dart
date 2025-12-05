@@ -5,6 +5,9 @@ import '../models/shift.dart';
 import '../providers/shifts_provider.dart';
 import '../utils/formatters.dart';
 
+const Color primaryPurple = Color(0xFF667eea);
+const Color primaryViolet = Color(0xFF764ba2);
+
 class EarningsContent extends StatefulWidget {
   const EarningsContent({super.key});
 
@@ -13,8 +16,6 @@ class EarningsContent extends StatefulWidget {
 }
 
 class _EarningsContentState extends State<EarningsContent> {
-  // No dropdown selection needed; current week will be moved to top.
-
   String _weekTitle(String weekKey) {
     final parsed = DateTime.tryParse(weekKey);
     if (parsed == null) return weekKey;
@@ -31,8 +32,8 @@ class _EarningsContentState extends State<EarningsContent> {
   Widget build(BuildContext context) {
     final provider = context.watch<ShiftsProvider>();
     final weeks = provider.groupByWeek();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // determine current week start key (Monday)
     final now = DateTime.now();
     final currentWeekStart = DateTime(
       now.year,
@@ -44,13 +45,12 @@ class _EarningsContentState extends State<EarningsContent> {
         '${currentWeekStart.month.toString().padLeft(2, '0')}-'
         '${currentWeekStart.day.toString().padLeft(2, '0')}';
 
-    const double firstRate = 12.21; // for first 20 hours
-    const double restRate = 9.0; // after 20 hours
+    const double firstRate = 12.21;
+    const double restRate = 9.0;
 
     final sorted = weeks.entries.toList()
       ..sort((a, b) => b.key.compareTo(a.key));
 
-    // If the current week exists in the data, move it to the top so it's shown first
     final currentIndex = sorted.indexWhere((e) => e.key == currentWeekKey);
     if (currentIndex > 0) {
       final entry = sorted.removeAt(currentIndex);
@@ -58,29 +58,42 @@ class _EarningsContentState extends State<EarningsContent> {
     }
 
     if (sorted.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(24.0),
-          child: Text('No recorded hours yet.'),
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.trending_up,
+                size: 64,
+                color: Colors.grey.withValues(alpha: 0.3),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No recorded hours yet',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       itemCount: sorted.length,
       itemBuilder: (context, idx) {
         final weekKey = sorted[idx].key;
         final days = sorted[idx].value;
+        final isCurrentWeek = weekKey == currentWeekKey;
 
-        // gather and sort days
         final dayPairs = <MapEntry<String, Shift>>[];
         for (final e in days) {
           dayPairs.add(MapEntry(e.key, e.value));
         }
         dayPairs.sort((a, b) => a.key.compareTo(b.key));
 
-        // compute totals using rounded minutes per day
         int totalMinutes = 0;
         final perDayInfo = <Map<String, dynamic>>[];
         for (final e in dayPairs) {
@@ -89,10 +102,8 @@ class _EarningsContentState extends State<EarningsContent> {
           int minutes = 0;
           if (s.arrival != null && s.departure != null) {
             final raw = s.departure!.difference(s.arrival!).inMinutes;
-            // Deduct a 15-minute unpaid break per shift (but not below 0)
             final workedWithoutBreak = raw - 15;
             final paidMinutes = workedWithoutBreak > 0 ? workedWithoutBreak : 0;
-            // Round the paid minutes to nearest 15
             minutes = roundMinutesTo15(paidMinutes);
             totalMinutes += minutes;
           }
@@ -109,124 +120,275 @@ class _EarningsContentState extends State<EarningsContent> {
         final weekAmount = (totalHours <= 20)
             ? totalHours * firstRate
             : 20 * firstRate + (totalHours - 20) * restRate;
+        final isPaid = provider.isWeekPaid(weekKey);
 
-        // build children widgets for days
-        final children = perDayInfo.map<Widget>((d) {
-          final parsed = DateTime.tryParse(d['dateKey'] as String);
-          final dayLabel = parsed != null
-              ? '${weekdaysShort[parsed.weekday - 1]} ${parsed.day} ${months[parsed.month - 1]}'
-              : d['dateKey'] as String;
-          final arrival = d['arrival'] as DateTime?;
-          final departure = d['departure'] as DateTime?;
-          final arrivalText = arrival != null ? formatNoYear(arrival) : '—';
-          final departureText = departure != null
-              ? formatNoYear(departure)
-              : '—';
-          final hours = (d['hours'] as double);
-
-          final complete = arrival != null && departure != null;
-          final textColor = complete ? null : Theme.of(context).disabledColor;
-          return ListTile(
-            enabled: complete,
-            title: Text(
-              dayLabel,
-              style: textColor != null ? TextStyle(color: textColor) : null,
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      Colors.grey.shade900,
+                      Colors.grey.shade900.withValues(alpha: 0.8),
+                    ]
+                  : [Colors.white, Colors.blue.shade50.withValues(alpha: 0.3)],
             ),
-            subtitle: Text(
-              'Arrival: $arrivalText  •  Departure: $departureText',
-              style: textColor != null ? TextStyle(color: textColor) : null,
+            borderRadius: BorderRadius.circular(16),
+            border: isCurrentWeek
+                ? Border.all(color: primaryPurple, width: 2)
+                : Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+          ),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              expansionTileTheme: ExpansionTileThemeData(
+                backgroundColor: isDark
+                    ? Colors.grey.shade900.withValues(alpha: 0.5)
+                    : Colors.white.withValues(alpha: 0.5),
+              ),
             ),
-            trailing: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${hours.toStringAsFixed(2)} h',
-                  style: textColor != null ? TextStyle(color: textColor) : null,
-                ),
-                Text(
-                  '£${((d['hours'] as double) * firstRate).toStringAsFixed(2)}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList();
-
-        // payment selector and confirmation
-        children.add(const Divider(height: 1));
-        children.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
-            ),
-            child: Row(
-              children: [
-                const Text('Payment:'),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Builder(
-                      builder: (ctx) {
-                        final isPaid = provider.isWeekPaid(weekKey);
-                        return DropdownButton<String>(
-                          value: isPaid ? 'Paid' : 'Not Paid',
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'Not Paid',
-                              child: Text('Not Paid'),
+            child: ExpansionTile(
+              initiallyExpanded: isCurrentWeek,
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      if (isCurrentWeek)
+                        Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: primaryPurple.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'Current',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: primaryPurple,
                             ),
-                            DropdownMenuItem(
-                              value: 'Paid',
-                              child: Text('Paid'),
+                          ),
+                        ),
+                      Expanded(child: Text(_weekTitle(weekKey))),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${totalHours.toStringAsFixed(2)} hours',
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      ),
+                      Text(
+                        '£${weekAmount.toStringAsFixed(2)}',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: primaryPurple,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 12),
+                      ...perDayInfo.map((d) {
+                        final parsed = DateTime.tryParse(
+                          d['dateKey'] as String,
+                        );
+                        final dayLabel = parsed != null
+                            ? '${weekdaysShort[parsed.weekday - 1]} ${parsed.day} ${months[parsed.month - 1]}'
+                            : d['dateKey'] as String;
+                        final arrival = d['arrival'] as DateTime?;
+                        final departure = d['departure'] as DateTime?;
+                        final arrivalText = arrival != null
+                            ? formatNoYear(arrival)
+                            : '—';
+                        final departureText = departure != null
+                            ? formatNoYear(departure)
+                            : '—';
+                        final hours = (d['hours'] as double);
+
+                        final complete = arrival != null && departure != null;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.grey.shade800
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: complete
+                                    ? primaryPurple.withValues(alpha: 0.3)
+                                    : Colors.grey.withValues(alpha: 0.2),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        dayLabel,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Arrival: $arrivalText  •  Departure: $departureText',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${hours.toStringAsFixed(2)} h',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(color: Colors.grey),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      '£${(hours * firstRate).toStringAsFixed(2)}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: complete
+                                                ? primaryPurple
+                                                : Colors.grey,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [primaryPurple, primaryViolet],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Weekly Total',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '£${weekAmount.toStringAsFixed(2)}',
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                provider.setWeekPaid(weekKey, !isPaid);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      !isPaid
+                                          ? 'Marked week as Paid'
+                                          : 'Marked week as Not Paid',
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      isPaid
+                                          ? Icons.check_circle
+                                          : Icons.pending,
+                                      color: isPaid
+                                          ? Colors.greenAccent
+                                          : Colors.amber,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      isPaid ? 'Paid' : 'Pending',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
-                          onChanged: (val) {
-                            if (val == null) return;
-                            final markPaid = val == 'Paid';
-                            provider.setWeekPaid(weekKey, markPaid);
-                            if (markPaid) {
-                              ScaffoldMessenger.of(ctx).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Marked week as Paid'),
-                                ),
-                              );
-                            }
-                          },
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        );
-
-        final isCurrentWeek = weekKey == currentWeekKey;
-
-        return ExpansionTile(
-          initiallyExpanded: isCurrentWeek,
-          tilePadding: const EdgeInsets.symmetric(horizontal: 8.0),
-          title: Text(_weekTitle(weekKey)),
-          subtitle: Text('${totalHours.toStringAsFixed(2)} hours'),
-          trailing: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '£${weekAmount.toStringAsFixed(2)}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-            ],
-          ),
-          children: children,
         );
       },
     );
