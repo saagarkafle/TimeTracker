@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../models/shift.dart';
 import '../providers/shifts_provider.dart';
+import '../utils/app_colors.dart';
 import '../utils/formatters.dart';
-
-const Color primaryPurple = Color(0xFF667eea);
-const Color primaryViolet = Color(0xFF764ba2);
 
 class EarningsContent extends StatefulWidget {
   const EarningsContent({super.key});
@@ -128,9 +126,9 @@ class _EarningsContentState extends State<EarningsContent> {
             color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: isCurrentWeek
-                ? Border.all(color: primaryPurple, width: 2)
+                ? Border.all(color: AppColors.primaryPurple, width: 2)
                 : Border.all(
-                    color: Colors.grey.withValues(alpha: 0.3),
+                    color: AppColors.getBorderColor(context),
                     width: 1.5,
                   ),
           ),
@@ -152,12 +150,14 @@ class _EarningsContentState extends State<EarningsContent> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: primaryPurple.withValues(alpha: 0.15),
+                          color: AppColors.primaryPurple.withValues(
+                            alpha: 0.15,
+                          ),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.calendar_today,
-                          color: primaryPurple,
+                          color: AppColors.primaryPurple,
                           size: 20,
                         ),
                       ),
@@ -171,7 +171,9 @@ class _EarningsContentState extends State<EarningsContent> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: primaryPurple.withValues(alpha: 0.2),
+                            color: AppColors.primaryPurple.withValues(
+                              alpha: 0.2,
+                            ),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text(
@@ -179,7 +181,7 @@ class _EarningsContentState extends State<EarningsContent> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: primaryPurple,
+                              color: AppColors.primaryPurple,
                             ),
                           ),
                         ),
@@ -191,15 +193,15 @@ class _EarningsContentState extends State<EarningsContent> {
                     children: [
                       Text(
                         '${totalHours.toStringAsFixed(2)} hours',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.getSecondaryTextColor(context),
+                        ),
                       ),
                       Text(
                         '£${weekAmount.toStringAsFixed(2)}',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: primaryPurple,
+                          color: AppColors.primaryPurple,
                         ),
                       ),
                     ],
@@ -244,9 +246,11 @@ class _EarningsContentState extends State<EarningsContent> {
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: complete
-                                    ? primaryPurple.withValues(alpha: 0.8)
-                                    : Colors.grey.withValues(alpha: 0.5),
-                                width: 2,
+                                    ? AppColors.primaryPurple.withValues(
+                                        alpha: 0.8,
+                                      )
+                                    : AppColors.getBorderColor(context),
+                                width: complete ? 2 : 1.5,
                               ),
                             ),
                             child: Row(
@@ -256,14 +260,16 @@ class _EarningsContentState extends State<EarningsContent> {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: complete
-                                        ? primaryPurple.withValues(alpha: 0.15)
+                                        ? AppColors.primaryPurple.withValues(
+                                            alpha: 0.15,
+                                          )
                                         : Colors.grey.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
                                     Icons.calendar_today,
                                     color: complete
-                                        ? primaryPurple
+                                        ? AppColors.primaryPurple
                                         : Colors.grey,
                                     size: 18,
                                   ),
@@ -289,7 +295,12 @@ class _EarningsContentState extends State<EarningsContent> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodySmall
-                                            ?.copyWith(color: Colors.grey),
+                                            ?.copyWith(
+                                              color:
+                                                  AppColors.getSecondaryTextColor(
+                                                    context,
+                                                  ),
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -299,11 +310,16 @@ class _EarningsContentState extends State<EarningsContent> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '${hours.toStringAsFixed(2)} h',
+                                      '£${hours.toStringAsFixed(2)} h',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall
-                                          ?.copyWith(color: Colors.grey),
+                                          ?.copyWith(
+                                            color:
+                                                AppColors.getSecondaryTextColor(
+                                                  context,
+                                                ),
+                                          ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
@@ -314,8 +330,10 @@ class _EarningsContentState extends State<EarningsContent> {
                                           ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: complete
-                                                ? primaryPurple
-                                                : Colors.grey,
+                                                ? AppColors.primaryPurple
+                                                : AppColors.getSecondaryTextColor(
+                                                    context,
+                                                  ),
                                           ),
                                     ),
                                   ],
@@ -329,12 +347,7 @@ class _EarningsContentState extends State<EarningsContent> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [primaryPurple, primaryViolet],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
+                          gradient: AppColors.primaryGradient,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

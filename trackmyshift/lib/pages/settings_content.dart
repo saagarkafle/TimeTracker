@@ -23,13 +23,6 @@ class _SettingsContentState extends State<SettingsContent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Appearance',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            const Text('Theme toggle is available in the app bar.'),
-            const SizedBox(height: 24),
-            const Text(
               'Account',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),

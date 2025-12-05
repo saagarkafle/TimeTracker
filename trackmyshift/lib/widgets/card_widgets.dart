@@ -22,6 +22,9 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isHighlighted
+        ? AppColors.primaryPurple.withValues(alpha: 0.8)
+        : AppColors.getBorderColor(context);
 
     return GestureDetector(
       onTap: onTap,
@@ -31,9 +34,7 @@ class AppCard extends StatelessWidget {
           color: isDark ? Colors.grey.shade800 : Colors.white,
           borderRadius: BorderRadius.circular(borderRadius),
           border: Border.all(
-            color: isHighlighted
-                ? AppColors.primaryPurple.withValues(alpha: 0.8)
-                : Colors.grey.withValues(alpha: 0.3),
+            color: borderColor,
             width: isHighlighted ? 2 : 1.5,
           ),
         ),
@@ -87,15 +88,16 @@ class OuterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isCurrentWeek
+        ? AppColors.primaryPurple
+        : AppColors.getBorderColor(context);
 
     return Container(
       margin: margin,
       decoration: BoxDecoration(
         color: isDark ? Colors.grey.shade900 : Colors.white,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: isCurrentWeek
-            ? Border.all(color: AppColors.primaryPurple, width: 2)
-            : Border.all(color: Colors.grey.withValues(alpha: 0.3), width: 1.5),
+        border: Border.all(color: borderColor, width: isCurrentWeek ? 2 : 1.5),
       ),
       child: child,
     );

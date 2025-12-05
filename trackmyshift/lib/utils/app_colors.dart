@@ -35,10 +35,13 @@ class AppColors {
     BuildContext context, {
     bool isHighlighted = false,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isHighlighted) {
       return primaryPurple.withValues(alpha: 0.8);
     }
-    return Colors.grey.withValues(alpha: 0.3);
+    return isDark
+        ? Colors.grey.withValues(alpha: 0.3)
+        : Colors.grey.withValues(alpha: 0.4);
   }
 
   static Color getBackgroundColor(BuildContext context) {

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/shifts_provider.dart';
+import '../utils/app_colors.dart';
 import '../utils/formatters.dart';
 import '../widgets/big_check_button.dart';
+import '../widgets/card_widgets.dart';
 
 class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
@@ -26,22 +28,9 @@ class _HomeContentState extends State<HomeContent>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Today's Date & Time Card
-            Container(
+            AppCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey.shade900 : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: const Color(0xFF667eea).withValues(alpha: 0.3),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF667eea).withValues(alpha: 0.1),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
+              borderRadius: 16,
               child: StreamBuilder<DateTime>(
                 stream: Stream.periodic(
                   const Duration(seconds: 1),
@@ -54,19 +43,11 @@ class _HomeContentState extends State<HomeContent>
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF667eea,
-                              ).withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Icon(
-                              Icons.calendar_today,
-                              color: Color(0xFF667eea),
-                              size: 20,
-                            ),
+                          IconContainer(
+                            icon: Icons.calendar_today,
+                            isActive: true,
+                            size: 40,
+                            iconSize: 20,
                           ),
                           const SizedBox(width: 12),
                           Text(
@@ -80,7 +61,7 @@ class _HomeContentState extends State<HomeContent>
                       Text(
                         prettyDate(now),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
+                          color: AppColors.getSecondaryTextColor(context),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -111,7 +92,7 @@ class _HomeContentState extends State<HomeContent>
               decoration: BoxDecoration(
                 color: isDark ? Colors.grey.shade900 : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                border: Border.all(color: AppColors.getBorderColor(context)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,33 +148,17 @@ class _HomeContentState extends State<HomeContent>
     required bool isRecorded,
     required VoidCallback onClear,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isRecorded
-              ? const Color(0xFF667eea).withValues(alpha: 0.3)
-              : Colors.grey.withValues(alpha: 0.2),
-        ),
-      ),
+      borderRadius: 12,
+      isHighlighted: isRecorded,
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isRecorded
-                  ? const Color(0xFF667eea).withValues(alpha: 0.15)
-                  : Colors.grey.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              icon,
-              color: isRecorded ? const Color(0xFF667eea) : Colors.grey,
-              size: 20,
-            ),
+          IconContainer(
+            icon: icon,
+            isActive: isRecorded,
+            size: 40,
+            iconSize: 20,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -203,7 +168,7 @@ class _HomeContentState extends State<HomeContent>
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.getSecondaryTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -230,32 +195,20 @@ class _HomeContentState extends State<HomeContent>
   }
 
   Widget _buildDurationCard(BuildContext context, ShiftsProvider shifts) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final mins = shifts.departure!.difference(shifts.arrival!).inMinutes;
     final hours = mins / 60.0;
 
-    return Container(
+    return AppCard(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.grey.shade800 : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFF667eea).withValues(alpha: 0.3),
-        ),
-      ),
+      borderRadius: 12,
+      isHighlighted: true,
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF667eea).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(
-              Icons.schedule,
-              color: Color(0xFF667eea),
-              size: 20,
-            ),
+          IconContainer(
+            icon: Icons.schedule,
+            isActive: true,
+            size: 40,
+            iconSize: 20,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -265,7 +218,7 @@ class _HomeContentState extends State<HomeContent>
                 Text(
                   'Duration',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.getSecondaryTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
