@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/shift.dart';
+import '../services/firestore_service.dart';
 import '../utils/notifications.dart';
 
 class ShiftsProvider extends ChangeNotifier {
@@ -17,6 +19,64 @@ class ShiftsProvider extends ChangeNotifier {
 
   ShiftsProvider() {
     _loadFromPrefs();
+  }
+
+  // Firestore helpers
+  FirestoreService? _firestore;
+  StreamSubscription<List<MapEntry<String, Shift>>>? _shiftsSub;
+  StreamSubscription<Map<String, bool>>? _paidSub;
+  String? _attachedUid;
+
+  /// Attach a logged-in user (uid) to enable cloud sync. Passing null disables sync.
+  void attachUser(String? uid) async {
+    // detach previous
+    if (_attachedUid == uid) return;
+    _attachedUid = uid;
+    await _shiftsSub?.cancel();
+    await _paidSub?.cancel();
+    _firestore = null;
+
+    if (uid == null) {
+      // nothing to sync
+      return;
+    }
+
+    _firestore = FirestoreService();
+
+    // First: migrate local prefs to Firestore if there is data locally
+    if (_shifts.isNotEmpty) {
+      for (final e in _shifts.entries) {
+        await _firestore!.uploadShift(uid, e.key, e.value);
+      }
+    }
+    if (_weekPaid.isNotEmpty) {
+      await _firestore!.setWeekPaidMap(uid, _weekPaid);
+    }
+
+    // Listen to remote shifts and merge
+    _shiftsSub = _firestore!.listenShifts(uid).listen((remoteList) {
+      var updated = false;
+      for (final e in remoteList) {
+        final key = e.key;
+        final shift = e.value;
+        final local = _shifts[key];
+        if (local == null || local != shift) {
+          _shifts[key] = shift;
+          updated = true;
+        }
+      }
+      if (updated) {
+        _saveToPrefs();
+        notifyListeners();
+      }
+    });
+
+    _paidSub = _firestore!.listenWeekPaid(uid).listen((map) {
+      _weekPaid.clear();
+      _weekPaid.addAll(map);
+      _saveToPrefs();
+      notifyListeners();
+    });
   }
 
   // Convenience getters for today's arrival/departure (used by existing UI)
@@ -252,6 +312,16 @@ class ShiftsProvider extends ChangeNotifier {
     final Map<String, dynamic> paidToSave = {};
     _weekPaid.forEach((k, v) => paidToSave[k] = v);
     await prefs.setString(_paidKey, json.encode(paidToSave));
+    // if attached to a user, also propagate to Firestore asynchronously
+    if (_attachedUid != null && _firestore != null) {
+      final uid = _attachedUid!;
+      // upload shifts
+      for (final e in _shifts.entries) {
+        unawaited(_firestore!.uploadShift(uid, e.key, e.value));
+      }
+      // upload weeks paid map
+      unawaited(_firestore!.setWeekPaidMap(uid, _weekPaid));
+    }
   }
 
   /// Remove a specific day's record (key in 'yyyy-MM-dd')
@@ -279,6 +349,10 @@ class ShiftsProvider extends ChangeNotifier {
             ? 'Week starting $weekKey marked as Paid'
             : 'Week starting $weekKey marked as Not Paid',
       );
+      // If attached to a user, propagate weeks map immediately
+      if (_attachedUid != null && _firestore != null) {
+        unawaited(_firestore!.setWeekPaidMap(_attachedUid!, _weekPaid));
+      }
     }
     notifyListeners();
   }

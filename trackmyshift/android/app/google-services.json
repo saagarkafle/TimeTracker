@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "766525947356",
+    "project_id": "timetracker-c6a98",
+    "storage_bucket": "timetracker-c6a98.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:766525947356:android:1f2cbe95ae5dd486bce319",
+        "android_client_info": {
+          "package_name": "com.example.trackmyshift"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "766525947356-qkaqs0k7kchkruf3eoia4pe7ak8pi3i8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trackmyshift",
+            "certificate_hash": "f69b7b85c2bd594ce8f36abd6fc8f47e574d0421"
+          }
+        },
+        {
+          "client_id": "766525947356-n37upib9c1inafcfpmg31dtjtrhv3oqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg4iOL8k46B1kosBhvzaw7n0n8vj6L5xU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "766525947356-n37upib9c1inafcfpmg31dtjtrhv3oqq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
