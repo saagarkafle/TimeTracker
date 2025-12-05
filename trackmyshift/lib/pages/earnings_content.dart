@@ -125,27 +125,21 @@ class _EarningsContentState extends State<EarningsContent> {
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      Colors.grey.shade900,
-                      Colors.grey.shade900.withValues(alpha: 0.8),
-                    ]
-                  : [Colors.white, Colors.blue.shade50.withValues(alpha: 0.3)],
-            ),
+            color: isDark ? Colors.grey.shade900 : Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: isCurrentWeek
                 ? Border.all(color: primaryPurple, width: 2)
-                : Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                : Border.all(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
           ),
           child: Theme(
             data: Theme.of(context).copyWith(
               expansionTileTheme: ExpansionTileThemeData(
                 backgroundColor: isDark
-                    ? Colors.grey.shade900.withValues(alpha: 0.5)
-                    : Colors.white.withValues(alpha: 0.5),
+                    ? Colors.grey.shade800
+                    : Colors.grey.shade50,
               ),
             ),
             child: ExpansionTile(
@@ -155,9 +149,23 @@ class _EarningsContentState extends State<EarningsContent> {
                 children: [
                   Row(
                     children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: primaryPurple.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.calendar_today,
+                          color: primaryPurple,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(_weekTitle(weekKey))),
                       if (isCurrentWeek)
                         Container(
-                          margin: const EdgeInsets.only(right: 8),
+                          margin: const EdgeInsets.only(left: 8),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 4,
@@ -175,7 +183,6 @@ class _EarningsContentState extends State<EarningsContent> {
                             ),
                           ),
                         ),
-                      Expanded(child: Text(_weekTitle(weekKey))),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -201,10 +208,12 @@ class _EarningsContentState extends State<EarningsContent> {
               ),
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   child: Column(
                     children: [
-                      const SizedBox(height: 12),
                       ...perDayInfo.map((d) {
                         final parsed = DateTime.tryParse(
                           d['dateKey'] as String,
@@ -235,13 +244,31 @@ class _EarningsContentState extends State<EarningsContent> {
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: complete
-                                    ? primaryPurple.withValues(alpha: 0.3)
-                                    : Colors.grey.withValues(alpha: 0.2),
+                                    ? primaryPurple.withValues(alpha: 0.8)
+                                    : Colors.grey.withValues(alpha: 0.5),
+                                width: 2,
                               ),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: complete
+                                        ? primaryPurple.withValues(alpha: 0.15)
+                                        : Colors.grey.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.calendar_today,
+                                    color: complete
+                                        ? primaryPurple
+                                        : Colors.grey,
+                                    size: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:

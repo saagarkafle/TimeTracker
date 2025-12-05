@@ -348,7 +348,10 @@ class HistoryContent extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 border: isCurrentWeek
                     ? Border.all(color: primaryPurple, width: 2)
-                    : Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+                    : Border.all(
+                        color: Colors.grey.withValues(alpha: 0.3),
+                        width: 1.5,
+                      ),
               ),
               child: Theme(
                 data: Theme.of(context).copyWith(
@@ -362,9 +365,23 @@ class HistoryContent extends StatelessWidget {
                   initiallyExpanded: isCurrentWeek,
                   title: Row(
                     children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: primaryPurple.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.calendar_today,
+                          color: primaryPurple,
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(child: Text('Week of ${prettyDate(weekStart)}')),
                       if (isCurrentWeek)
                         Container(
-                          margin: const EdgeInsets.only(right: 8),
+                          margin: const EdgeInsets.only(left: 8),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 8,
                             vertical: 4,
@@ -382,7 +399,6 @@ class HistoryContent extends StatelessWidget {
                             ),
                           ),
                         ),
-                      Text('Week of ${prettyDate(weekStart)}'),
                     ],
                   ),
                   children: visibleDays.map((e) {
@@ -422,8 +438,9 @@ class HistoryContent extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: complete
-                                ? primaryPurple.withValues(alpha: 0.3)
-                                : Colors.grey.withValues(alpha: 0.2),
+                                ? primaryPurple.withValues(alpha: 0.8)
+                                : Colors.grey.withValues(alpha: 0.5),
+                            width: 2,
                           ),
                         ),
                         child: Column(
@@ -432,27 +449,47 @@ class HistoryContent extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      titleText,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Arrival: $arrivalText  •  Departure: $departureText',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(color: Colors.grey),
-                                    ),
-                                  ],
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: complete
+                                        ? primaryPurple.withValues(alpha: 0.15)
+                                        : Colors.grey.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    Icons.calendar_today,
+                                    color: complete
+                                        ? primaryPurple
+                                        : Colors.grey,
+                                    size: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        titleText,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Arrival: $arrivalText  •  Departure: $departureText',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 Text(
                                   hoursStr,
