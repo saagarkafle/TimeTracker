@@ -8,6 +8,158 @@ import '../utils/formatters.dart';
 class HistoryContent extends StatelessWidget {
   const HistoryContent({super.key});
 
+  void _showAddTimeDialog(BuildContext context) {
+    final provider = context.read<ShiftsProvider>();
+    DateTime selectedDate = DateTime.now();
+    TimeOfDay? arrivalTod;
+    TimeOfDay? departureTod;
+
+    showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            return AlertDialog(
+              title: const Text('Add Shift Time'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      title: const Text('Date'),
+                      subtitle: Text(prettyDate(selectedDate)),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () async {
+                          final picked = await showDatePicker(
+                            context: ctx,
+                            initialDate: selectedDate,
+                            firstDate: DateTime(2020),
+                            lastDate: DateTime.now(),
+                          );
+                          if (picked != null) {
+                            setState(() => selectedDate = picked);
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ListTile(
+                      title: const Text('Arrival'),
+                      subtitle: Text(arrivalTod?.format(ctx) ?? 'Not set'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () async {
+                              final now = DateTime.now();
+                              final picked = await showTimePicker(
+                                context: ctx,
+                                initialTime:
+                                    arrivalTod ?? TimeOfDay.fromDateTime(now),
+                              );
+                              if (picked != null) {
+                                setState(() => arrivalTod = picked);
+                              }
+                            },
+                          ),
+                          if (arrivalTod != null)
+                            IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () =>
+                                  setState(() => arrivalTod = null),
+                            ),
+                        ],
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text('Departure'),
+                      subtitle: Text(departureTod?.format(ctx) ?? 'Not set'),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () async {
+                              final now = DateTime.now();
+                              final picked = await showTimePicker(
+                                context: ctx,
+                                initialTime:
+                                    departureTod ?? TimeOfDay.fromDateTime(now),
+                              );
+                              if (picked != null) {
+                                setState(() => departureTod = picked);
+                              }
+                            },
+                          ),
+                          if (departureTod != null)
+                            IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () =>
+                                  setState(() => departureTod = null),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (arrivalTod == null || departureTod == null) {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Please set both arrival and departure',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final arrivalDt = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      arrivalTod!.hour,
+                      arrivalTod!.minute,
+                    );
+                    final departureDt = DateTime(
+                      selectedDate.year,
+                      selectedDate.month,
+                      selectedDate.day,
+                      departureTod!.hour,
+                      departureTod!.minute,
+                    );
+
+                    provider.recordArrivalAt(arrivalDt);
+                    provider.recordDepartureAt(departureDt);
+
+                    ScaffoldMessenger.of(ctx).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Added shift for ${prettyDate(selectedDate)}',
+                        ),
+                      ),
+                    );
+                    Navigator.pop(ctx, true);
+                  },
+                  child: const Text('Add'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ShiftsProvider>();
@@ -313,6 +465,13 @@ class HistoryContent extends StatelessWidget {
     final children = <Widget>[];
     children.addAll(monthWidgets);
 
-    return ListView(padding: const EdgeInsets.all(12), children: children);
+    return Scaffold(
+      body: ListView(padding: const EdgeInsets.all(12), children: children),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTimeDialog(context),
+        tooltip: 'Add shift time',
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }

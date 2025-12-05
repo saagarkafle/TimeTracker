@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import '../providers/shifts_provider.dart';
 import 'analog_clock.dart';
 
-// Local copy of the green used in the app (keeps this widget standalone).
-const Color spotifyGreenLocal = Color(0xFF1DB954);
+// Primary colors matching app theme
+const Color primaryPurple = Color(0xFF667eea);
+const Color primaryViolet = Color(0xFF764ba2);
 
 class BigCheckButton extends StatefulWidget {
   const BigCheckButton({super.key});
@@ -109,7 +110,6 @@ class _BigCheckButtonState extends State<BigCheckButton>
     final ringSize = (outerSize * 0.94).clamp(120.0, 280.0).toDouble();
     final innerSize = (outerSize * 0.83).clamp(100.0, 250.0).toDouble();
     final clockSize = (innerSize * 0.73).clamp(72.0, 220.0).toDouble();
-    final iconSize = (innerSize * 0.42).clamp(36.0, 110.0).toDouble();
 
     return Center(
       child: GestureDetector(
@@ -153,7 +153,7 @@ class _BigCheckButtonState extends State<BigCheckButton>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: spotifyGreenLocal.withAlpha(40),
+                                color: primaryPurple.withValues(alpha: 0.3),
                                 blurRadius: glow,
                                 spreadRadius: glow / 6,
                               ),
@@ -187,14 +187,18 @@ class _BigCheckButtonState extends State<BigCheckButton>
                         height: innerSize,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              spotifyGreenLocal.withAlpha(220),
-                              spotifyGreenLocal,
-                            ],
+                            colors: [primaryPurple, primaryViolet],
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: primaryPurple.withValues(alpha: 0.4),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
                         child: InkWell(
                           customBorder: const CircleBorder(),
@@ -210,10 +214,59 @@ class _BigCheckButtonState extends State<BigCheckButton>
                               return Center(
                                 child: showClock
                                     ? AnalogClock(size: clockSize)
-                                    : Icon(
-                                        Icons.login,
-                                        color: Colors.white,
-                                        size: iconSize,
+                                    : Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          // Animated pulsing dot pattern
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: List.generate(3, (i) {
+                                              return AnimatedBuilder(
+                                                animation: _pulseController,
+                                                builder: (context, _) {
+                                                  final delay = i * 0.15;
+                                                  final scaleFactor =
+                                                      0.6 +
+                                                      ((_pulseController.value +
+                                                                  delay) %
+                                                              1.0) *
+                                                          0.4;
+                                                  return Padding(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 4.0,
+                                                        ),
+                                                    child: AnimatedScale(
+                                                      scale: scaleFactor,
+                                                      duration: const Duration(
+                                                        milliseconds: 100,
+                                                      ),
+                                                      child: Container(
+                                                        width: 10,
+                                                        height: 10,
+                                                        decoration: BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          color: Colors.white
+                                                              .withValues(
+                                                                alpha:
+                                                                    0.9 -
+                                                                    (scaleFactor *
+                                                                        0.3),
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }),
+                                          ),
+                                        ],
                                       ),
                               );
                             },
@@ -224,13 +277,6 @@ class _BigCheckButtonState extends State<BigCheckButton>
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              shifts.arrival == null ? 'Check in' : 'Check out',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
           ],
         ),

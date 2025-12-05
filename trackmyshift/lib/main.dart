@@ -112,6 +112,26 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onItemTapped(int idx) => setState(() => _selectedIndex = idx);
 
+  Widget _buildNavIcon(IconData icon, int index) {
+    final isSelected = _selectedIndex == index;
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: isSelected
+          ? BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            )
+          : null,
+      child: Icon(
+        icon,
+        size: isSelected ? 24 : 22,
+        color: isSelected ? Colors.white : null,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,26 +140,52 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: const [ThemeToggle()],
       ),
       body: SafeArea(child: _pages[_selectedIndex]),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-        elevation: 8,
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Theme.of(context).colorScheme.primary,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.payments),
-            label: 'Earnings',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : const Color(0xFF1a1a2e),
+          elevation: 0,
+          type: BottomNavigationBarType.fixed,
+          showUnselectedLabels: true,
+          currentIndex: _selectedIndex,
+          selectedItemColor: const Color(0xFF667eea),
+          unselectedItemColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.grey.shade500
+              : Colors.grey.shade600,
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
+          onTap: _onItemTapped,
+          items: [
+            BottomNavigationBarItem(
+              icon: _buildNavIcon(Icons.home, 0),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavIcon(Icons.history, 1),
+              label: 'History',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavIcon(Icons.payments, 2),
+              label: 'Earnings',
+            ),
+            BottomNavigationBarItem(
+              icon: _buildNavIcon(Icons.settings, 3),
+              label: 'Settings',
+            ),
+          ],
+        ),
       ),
     );
   }
