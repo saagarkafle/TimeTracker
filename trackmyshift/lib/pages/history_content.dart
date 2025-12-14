@@ -4,9 +4,10 @@ import 'package:provider/provider.dart';
 import '../models/shift.dart';
 import '../providers/shifts_provider.dart';
 import '../utils/formatters.dart';
+import '../utils/app_colors.dart';
 
-const Color primaryPurple = Color(0xFF667eea);
-const Color primaryViolet = Color(0xFF764ba2);
+
+
 
 class HistoryContent extends StatelessWidget {
   const HistoryContent({super.key});
@@ -91,7 +92,7 @@ class HistoryContent extends StatelessWidget {
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryPurple,
+                    backgroundColor: AppColors.primaryPurple,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -156,19 +157,19 @@ class HistoryContent extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: primaryPurple.withValues(alpha: 0.2)),
+        border: Border.all(color: AppColors.primaryPurple.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: primaryPurple.withValues(alpha: 0.1),
+              color: AppColors.primaryPurple.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
               Icons.calendar_today,
-              color: primaryPurple,
+              color: AppColors.primaryPurple,
               size: 20,
             ),
           ),
@@ -180,7 +181,7 @@ class HistoryContent extends StatelessWidget {
                 Text(
                   'Date',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.getSecondaryTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -195,7 +196,7 @@ class HistoryContent extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.edit, color: primaryPurple),
+            icon: const Icon(Icons.edit, color: AppColors.primaryPurple),
             onPressed: onTap,
           ),
         ],
@@ -217,7 +218,7 @@ class HistoryContent extends StatelessWidget {
         color: isDark ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (time != null ? primaryPurple : Colors.grey).withValues(
+          color: (time != null ? AppColors.primaryPurple : Colors.grey).withValues(
             alpha: 0.2,
           ),
         ),
@@ -227,14 +228,14 @@ class HistoryContent extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (time != null ? primaryPurple : Colors.grey).withValues(
+              color: (time != null ? AppColors.primaryPurple : Colors.grey).withValues(
                 alpha: 0.1,
               ),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               label == 'Arrival' ? Icons.login : Icons.logout,
-              color: time != null ? primaryPurple : Colors.grey,
+              color: time != null ? AppColors.primaryPurple : Colors.grey,
               size: 20,
             ),
           ),
@@ -246,7 +247,7 @@ class HistoryContent extends StatelessWidget {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.getSecondaryTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -265,7 +266,7 @@ class HistoryContent extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.edit, color: primaryPurple, size: 18),
+                icon: const Icon(Icons.edit, color: AppColors.primaryPurple, size: 18),
                 onPressed: onEdit,
                 constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
@@ -347,9 +348,9 @@ class HistoryContent extends StatelessWidget {
                 color: isDark ? Colors.grey.shade900 : Colors.white,
                 borderRadius: BorderRadius.circular(16),
                 border: isCurrentWeek
-                    ? Border.all(color: primaryPurple, width: 2)
+                    ? Border.all(color: AppColors.primaryPurple, width: 2)
                     : Border.all(
-                        color: Colors.grey.withValues(alpha: 0.3),
+                        color: AppColors.getBorderColor(context),
                         width: 1.5,
                       ),
               ),
@@ -368,12 +369,12 @@ class HistoryContent extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: primaryPurple.withValues(alpha: 0.15),
+                          color: AppColors.primaryPurple.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.calendar_today,
-                          color: primaryPurple,
+                          color: AppColors.primaryPurple,
                           size: 20,
                         ),
                       ),
@@ -387,7 +388,7 @@ class HistoryContent extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: primaryPurple.withValues(alpha: 0.2),
+                            color: AppColors.primaryPurple.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text(
@@ -395,7 +396,7 @@ class HistoryContent extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: primaryPurple,
+                              color: AppColors.primaryPurple,
                             ),
                           ),
                         ),
@@ -438,7 +439,7 @@ class HistoryContent extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: complete
-                                ? primaryPurple.withValues(alpha: 0.8)
+                                ? AppColors.primaryPurple.withValues(alpha: 0.8)
                                 : Colors.grey.withValues(alpha: 0.5),
                             width: 2,
                           ),
@@ -453,14 +454,14 @@ class HistoryContent extends StatelessWidget {
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
                                     color: complete
-                                        ? primaryPurple.withValues(alpha: 0.15)
+                                        ? AppColors.primaryPurple.withValues(alpha: 0.15)
                                         : Colors.grey.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
                                     Icons.calendar_today,
                                     color: complete
-                                        ? primaryPurple
+                                        ? AppColors.primaryPurple
                                         : Colors.grey,
                                     size: 18,
                                   ),
@@ -497,7 +498,7 @@ class HistoryContent extends StatelessWidget {
                                       ?.copyWith(
                                         fontWeight: FontWeight.w700,
                                         color: complete
-                                            ? primaryPurple
+                                            ? AppColors.primaryPurple
                                             : Colors.grey,
                                       ),
                                 ),
@@ -511,7 +512,7 @@ class HistoryContent extends StatelessWidget {
                                   icon: const Icon(
                                     Icons.edit_outlined,
                                     size: 18,
-                                    color: primaryPurple,
+                                    color: AppColors.primaryPurple,
                                   ),
                                   tooltip: 'Edit times',
                                   onPressed: () async {
@@ -607,7 +608,7 @@ class HistoryContent extends StatelessWidget {
                                                 ElevatedButton(
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        primaryPurple,
+                                                        AppColors.primaryPurple,
                                                     shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -760,7 +761,7 @@ class HistoryContent extends StatelessWidget {
               Icon(
                 Icons.history,
                 size: 64,
-                color: Colors.grey.withValues(alpha: 0.3),
+                color: AppColors.getBorderColor(context),
               ),
               const SizedBox(height: 16),
               Text(
@@ -777,7 +778,7 @@ class HistoryContent extends StatelessWidget {
       body: ListView(padding: const EdgeInsets.all(16), children: monthWidgets),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddTimeDialog(context),
-        backgroundColor: primaryPurple,
+        backgroundColor: AppColors.primaryPurple,
         tooltip: 'Add shift time',
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -798,7 +799,7 @@ class HistoryContent extends StatelessWidget {
         color: isDark ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: (time != null ? primaryPurple : Colors.grey).withValues(
+          color: (time != null ? AppColors.primaryPurple : Colors.grey).withValues(
             alpha: 0.2,
           ),
         ),
@@ -808,14 +809,14 @@ class HistoryContent extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (time != null ? primaryPurple : Colors.grey).withValues(
+              color: (time != null ? AppColors.primaryPurple : Colors.grey).withValues(
                 alpha: 0.1,
               ),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               label == 'Arrival' ? Icons.login : Icons.logout,
-              color: time != null ? primaryPurple : Colors.grey,
+              color: time != null ? AppColors.primaryPurple : Colors.grey,
               size: 20,
             ),
           ),
@@ -827,7 +828,7 @@ class HistoryContent extends StatelessWidget {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
+                    color: AppColors.getSecondaryTextColor(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -846,7 +847,7 @@ class HistoryContent extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.edit, color: primaryPurple, size: 18),
+                icon: const Icon(Icons.edit, color: AppColors.primaryPurple, size: 18),
                 onPressed: onEdit,
               ),
               if (time != null)
