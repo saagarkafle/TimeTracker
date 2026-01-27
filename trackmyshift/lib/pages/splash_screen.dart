@@ -12,18 +12,10 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-
     // Keep the splash visible briefly, then navigate to the registered
     // '/home' route (registered in `main.dart`). Using a named route avoids
     // importing `main.dart` and creating circular imports.
@@ -34,14 +26,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
@@ -49,38 +34,44 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              RotationTransition(
-                turns: _ctrl,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: color.withAlpha((0.25 * 255).round()),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+              // Clock icon with gradient background
+              Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  padding: const EdgeInsets.all(20),
-                  child: const Icon(
-                    Icons.access_time_rounded,
-                    color: Colors.white,
-                    size: 72,
-                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF667eea).withValues(alpha: 0.4),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(20),
+                child: const Icon(
+                  Icons.schedule_outlined,
+                  color: Colors.white,
+                  size: 60,
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Loading',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 32),
               const SizedBox(
-                width: 48,
-                height: 48,
-                child: CircularProgressIndicator(strokeWidth: 3.5),
+                width: 60,
+                height: 60,
+                child: CircularProgressIndicator(
+                  strokeWidth: 4,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF667eea)),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Track My Shift',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
             ],
           ),

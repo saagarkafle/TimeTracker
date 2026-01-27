@@ -77,7 +77,7 @@ class AppTheme {
           borderSide: const BorderSide(color: _lightPrimaryColor, width: 2),
         ),
       ),
-      scaffoldBackgroundColor: Colors.grey.withValues(alpha: 0.05),
+      scaffoldBackgroundColor: Colors.white,
     );
   }
 
