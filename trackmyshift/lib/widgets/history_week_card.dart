@@ -133,13 +133,14 @@ class HistoryWeekCard extends StatelessWidget {
             color: AppColors.primaryPurple.withValues(alpha: 0.3),
           ),
         ),
+        clipBehavior: Clip.antiAlias,
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: AppColors.primaryPurple.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.calendar_today,

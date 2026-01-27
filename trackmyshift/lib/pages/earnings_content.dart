@@ -43,7 +43,7 @@ class _EarningsContentState extends State<EarningsContent> {
         '${currentWeekStart.month.toString().padLeft(2, '0')}-'
         '${currentWeekStart.day.toString().padLeft(2, '0')}';
 
-    const double firstRate = 12.21;
+    const double firstRate = 12.12;
     const double restRate = 9.0;
 
     final sorted = weeks.entries.toList()
@@ -105,19 +105,45 @@ class _EarningsContentState extends State<EarningsContent> {
             minutes = roundMinutesTo15(paidMinutes);
             totalMinutes += minutes;
           }
+          final hours = minutes / 60.0;
           perDayInfo.add({
             'dateKey': dateKey,
             'minutes': minutes,
-            'hours': minutes / 60.0,
+            'hours': hours,
             'arrival': s.arrival,
             'departure': s.departure,
           });
         }
 
         final totalHours = totalMinutes / 60.0;
-        final weekAmount = (totalHours <= 20)
+
+        // Calculate daily earnings based on tiered rates
+        double cumulativeHours = 0;
+        for (final dayInfo in perDayInfo) {
+          final dayHours = dayInfo['hours'] as double;
+          double dayEarnings = 0;
+
+          if (cumulativeHours + dayHours <= 19) {
+            // All hours in this day are at the first rate
+            dayEarnings = dayHours * firstRate;
+          } else if (cumulativeHours >= 19) {
+            // All hours in this day are at the rest rate
+            dayEarnings = dayHours * restRate;
+          } else {
+            // This day spans the threshold
+            final hoursAtFirstRate = 19 - cumulativeHours;
+            final hoursAtRestRate = dayHours - hoursAtFirstRate;
+            dayEarnings =
+                (hoursAtFirstRate * firstRate) + (hoursAtRestRate * restRate);
+          }
+
+          dayInfo['earnings'] = dayEarnings;
+          cumulativeHours += dayHours;
+        }
+
+        final weekAmount = (totalHours <= 19)
             ? totalHours * firstRate
-            : 20 * firstRate + (totalHours - 20) * restRate;
+            : 19 * firstRate + (totalHours - 19) * restRate;
         final isPaid = provider.isWeekPaid(weekKey);
 
         return Container(
@@ -132,6 +158,7 @@ class _EarningsContentState extends State<EarningsContent> {
                     width: 1.5,
                   ),
           ),
+          clipBehavior: Clip.hardEdge,
           child: Theme(
             data: Theme.of(context).copyWith(
               expansionTileTheme: ExpansionTileThemeData(
@@ -310,7 +337,7 @@ class _EarningsContentState extends State<EarningsContent> {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      '£${hours.toStringAsFixed(2)} h',
+                                      '${hours.toStringAsFixed(2)} h',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall
@@ -323,7 +350,7 @@ class _EarningsContentState extends State<EarningsContent> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      '£${(hours * firstRate).toStringAsFixed(2)}',
+                                      '£${(d['earnings'] as double).toStringAsFixed(2)}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleSmall
