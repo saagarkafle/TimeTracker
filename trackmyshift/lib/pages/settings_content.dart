@@ -22,9 +22,15 @@ class _SettingsContentState extends State<SettingsContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Account',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black87
+                    : Colors.white,
+              ),
             ),
             const SizedBox(height: 12),
             if (user != null) ...[
@@ -34,15 +40,27 @@ class _SettingsContentState extends State<SettingsContent> {
                   // Background blur effect
                   Container(
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      gradient: Theme.of(context).brightness == Brightness.light
+                          ? LinearGradient(
+                              colors: [
+                                Colors.grey.shade100,
+                                Colors.grey.shade200,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : const LinearGradient(
+                              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF667eea).withValues(alpha: 0.4),
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                              ? Colors.black.withValues(alpha: 0.1)
+                              : const Color(0xFF667eea).withValues(alpha: 0.4),
                           blurRadius: 20,
                           offset: const Offset(0, 8),
                           spreadRadius: 2,
@@ -62,7 +80,11 @@ class _SettingsContentState extends State<SettingsContent> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.grey.shade400
+                                      : Colors.white,
                                   width: 4,
                                 ),
                                 boxShadow: [
@@ -85,14 +107,26 @@ class _SettingsContentState extends State<SettingsContent> {
                                             width: 100,
                                             height: 100,
                                             decoration: BoxDecoration(
-                                              color: Colors.white.withValues(
-                                                alpha: 0.2,
-                                              ),
+                                              color:
+                                                  Theme.of(
+                                                        context,
+                                                      ).brightness ==
+                                                      Brightness.light
+                                                  ? Colors.grey.shade300
+                                                  : Colors.white.withValues(
+                                                      alpha: 0.2,
+                                                    ),
                                               shape: BoxShape.circle,
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.person,
-                                              color: Colors.white,
+                                              color:
+                                                  Theme.of(
+                                                        context,
+                                                      ).brightness ==
+                                                      Brightness.light
+                                                  ? Colors.grey.shade700
+                                                  : Colors.white,
                                               size: 50,
                                             ),
                                           );
@@ -102,14 +136,22 @@ class _SettingsContentState extends State<SettingsContent> {
                                         width: 100,
                                         height: 100,
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.2,
-                                          ),
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? Colors.grey.shade300
+                                              : Colors.white.withValues(
+                                                  alpha: 0.2,
+                                                ),
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.person,
-                                          color: Colors.white,
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? Colors.grey.shade700
+                                              : Colors.white,
                                           size: 50,
                                         ),
                                       ),
@@ -143,10 +185,13 @@ class _SettingsContentState extends State<SettingsContent> {
                         Text(
                           user.displayName ?? 'User',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? Colors.black87
+                                : Colors.white,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -158,7 +203,10 @@ class _SettingsContentState extends State<SettingsContent> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.white.withValues(alpha: 0.85),
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? Colors.black54
+                                : Colors.white.withValues(alpha: 0.85),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -171,10 +219,17 @@ class _SettingsContentState extends State<SettingsContent> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? Colors.grey.shade300
+                                : Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.3),
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey.shade400
+                                  : Colors.white.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -186,7 +241,11 @@ class _SettingsContentState extends State<SettingsContent> {
                                             'google.com'
                                     ? Icons.verified
                                     : Icons.mail,
-                                color: Colors.white,
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.black87
+                                    : Colors.white,
                                 size: 14,
                               ),
                               const SizedBox(width: 6),
@@ -196,9 +255,13 @@ class _SettingsContentState extends State<SettingsContent> {
                                       ? user.providerData.first.providerId
                                       : 'password',
                                 ),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.white,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.black87
+                                      : Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -213,10 +276,17 @@ class _SettingsContentState extends State<SettingsContent> {
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.08),
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                ? Colors.grey.shade200
+                                : Colors.white.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.1),
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey.shade300
+                                  : Colors.white.withValues(alpha: 0.1),
                             ),
                           ),
                           child: Row(
@@ -232,7 +302,11 @@ class _SettingsContentState extends State<SettingsContent> {
                               Container(
                                 width: 1,
                                 height: 30,
-                                color: Colors.white.withValues(alpha: 0.2),
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.grey.shade400
+                                    : Colors.white.withValues(alpha: 0.2),
                               ),
                               _buildStatColumn(
                                 icon: Icons.security,
@@ -274,21 +348,38 @@ class _SettingsContentState extends State<SettingsContent> {
               ),
             ],
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'About',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black87
+                    : Colors.white,
+              ),
             ),
             const SizedBox(height: 12),
             const Text('Track My Shift v1.0', style: TextStyle(fontSize: 14)),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Manage your shifts and earnings efficiently',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.grey.shade700
+                    : Colors.grey,
+              ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'Developer',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black87
+                    : Colors.white,
+              ),
             ),
             const SizedBox(height: 12),
             Container(
@@ -360,14 +451,22 @@ class _SettingsContentState extends State<SettingsContent> {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: Colors.white, size: 18),
+          Icon(
+            icon,
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black87
+                : Colors.white,
+            size: 18,
+          ),
           const SizedBox(height: 6),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black87
+                  : Colors.white,
             ),
           ),
           const SizedBox(height: 2),
@@ -375,7 +474,9 @@ class _SettingsContentState extends State<SettingsContent> {
             label,
             style: TextStyle(
               fontSize: 10,
-              color: Colors.white.withValues(alpha: 0.7),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.grey.shade700
+                  : Colors.white.withValues(alpha: 0.7),
             ),
           ),
         ],
