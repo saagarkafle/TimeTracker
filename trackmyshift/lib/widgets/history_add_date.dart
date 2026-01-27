@@ -67,11 +67,59 @@ class HistoryAddDate extends StatelessWidget {
                                       icon: const Icon(Icons.edit),
                                       onPressed: () async {
                                         final now = DateTime.now();
+                                        final isDark =
+                                            Theme.of(ctx).brightness ==
+                                            Brightness.dark;
                                         final pickedTime = await showTimePicker(
                                           context: ctx,
                                           initialTime:
                                               arrivalTod ??
                                               TimeOfDay.fromDateTime(now),
+                                          useRootNavigator: false,
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: Theme.of(context).copyWith(
+                                                timePickerTheme: TimePickerThemeData(
+                                                  backgroundColor: isDark
+                                                      ? Colors.grey.shade900
+                                                      : Colors.white,
+                                                  dayPeriodTextColor: isDark
+                                                      ? Colors.white
+                                                      : Colors.black87,
+                                                  dayPeriodColor: const Color(
+                                                    0xFF667eea,
+                                                  ).withValues(alpha: 0.2),
+                                                  dialBackgroundColor: isDark
+                                                      ? Colors.grey.shade800
+                                                      : Colors.grey.shade100,
+                                                  dialTextColor: isDark
+                                                      ? Colors.white
+                                                      : Colors.black87,
+                                                  entryModeIconColor:
+                                                      const Color(0xFF667eea),
+                                                  helpTextStyle: TextStyle(
+                                                    fontSize: 14,
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.black87,
+                                                  ),
+                                                  hourMinuteTextStyle:
+                                                      const TextStyle(
+                                                        fontSize: 36,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
                                         );
                                         if (pickedTime != null) {
                                           setState(
@@ -101,11 +149,59 @@ class HistoryAddDate extends StatelessWidget {
                                       icon: const Icon(Icons.edit),
                                       onPressed: () async {
                                         final now = DateTime.now();
+                                        final isDark =
+                                            Theme.of(ctx).brightness ==
+                                            Brightness.dark;
                                         final pickedTime = await showTimePicker(
                                           context: ctx,
                                           initialTime:
                                               departureTod ??
                                               TimeOfDay.fromDateTime(now),
+                                          useRootNavigator: false,
+                                          builder: (context, child) {
+                                            return Theme(
+                                              data: Theme.of(context).copyWith(
+                                                timePickerTheme: TimePickerThemeData(
+                                                  backgroundColor: isDark
+                                                      ? Colors.grey.shade900
+                                                      : Colors.white,
+                                                  dayPeriodTextColor: isDark
+                                                      ? Colors.white
+                                                      : Colors.black87,
+                                                  dayPeriodColor: const Color(
+                                                    0xFF667eea,
+                                                  ).withValues(alpha: 0.2),
+                                                  dialBackgroundColor: isDark
+                                                      ? Colors.grey.shade800
+                                                      : Colors.grey.shade100,
+                                                  dialTextColor: isDark
+                                                      ? Colors.white
+                                                      : Colors.black87,
+                                                  entryModeIconColor:
+                                                      const Color(0xFF667eea),
+                                                  helpTextStyle: TextStyle(
+                                                    fontSize: 14,
+                                                    color: isDark
+                                                        ? Colors.white
+                                                        : Colors.black87,
+                                                  ),
+                                                  hourMinuteTextStyle:
+                                                      const TextStyle(
+                                                        fontSize: 36,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: child!,
+                                            );
+                                          },
                                         );
                                         if (pickedTime != null) {
                                           setState(

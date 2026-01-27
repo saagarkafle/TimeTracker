@@ -43,6 +43,41 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: arrivalTod ?? TimeOfDay.now(),
+                  useRootNavigator: false,
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        timePickerTheme: TimePickerThemeData(
+                          backgroundColor: isDark
+                              ? Colors.grey.shade900
+                              : Colors.white,
+                          dayPeriodTextColor: isDark
+                              ? Colors.white
+                              : Colors.black87,
+                          dayPeriodColor: AppColors.primaryPurple.withValues(
+                            alpha: 0.2,
+                          ),
+                          dialBackgroundColor: isDark
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade100,
+                          dialTextColor: isDark ? Colors.white : Colors.black87,
+                          entryModeIconColor: AppColors.primaryPurple,
+                          helpTextStyle: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                          hourMinuteTextStyle: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
                 );
                 if (picked != null) {
                   setState(() => arrivalTod = picked);
@@ -59,6 +94,41 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: departureTod ?? TimeOfDay.now(),
+                  useRootNavigator: false,
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        timePickerTheme: TimePickerThemeData(
+                          backgroundColor: isDark
+                              ? Colors.grey.shade900
+                              : Colors.white,
+                          dayPeriodTextColor: isDark
+                              ? Colors.white
+                              : Colors.black87,
+                          dayPeriodColor: AppColors.primaryPurple.withValues(
+                            alpha: 0.2,
+                          ),
+                          dialBackgroundColor: isDark
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade100,
+                          dialTextColor: isDark ? Colors.white : Colors.black87,
+                          entryModeIconColor: AppColors.primaryPurple,
+                          helpTextStyle: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                          hourMinuteTextStyle: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
                 );
                 if (picked != null) {
                   setState(() => departureTod = picked);
@@ -262,6 +332,41 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: arrivalTod ?? TimeOfDay.now(),
+                  useRootNavigator: false,
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        timePickerTheme: TimePickerThemeData(
+                          backgroundColor: isDark
+                              ? Colors.grey.shade900
+                              : Colors.white,
+                          dayPeriodTextColor: isDark
+                              ? Colors.white
+                              : Colors.black87,
+                          dayPeriodColor: AppColors.primaryPurple.withValues(
+                            alpha: 0.2,
+                          ),
+                          dialBackgroundColor: isDark
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade100,
+                          dialTextColor: isDark ? Colors.white : Colors.black87,
+                          entryModeIconColor: AppColors.primaryPurple,
+                          helpTextStyle: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                          hourMinuteTextStyle: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
                 );
                 if (picked != null) {
                   setState(() => arrivalTod = picked);
@@ -278,6 +383,41 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
                 final picked = await showTimePicker(
                   context: context,
                   initialTime: departureTod ?? TimeOfDay.now(),
+                  useRootNavigator: false,
+                  builder: (context, child) {
+                    return Theme(
+                      data: Theme.of(context).copyWith(
+                        timePickerTheme: TimePickerThemeData(
+                          backgroundColor: isDark
+                              ? Colors.grey.shade900
+                              : Colors.white,
+                          dayPeriodTextColor: isDark
+                              ? Colors.white
+                              : Colors.black87,
+                          dayPeriodColor: AppColors.primaryPurple.withValues(
+                            alpha: 0.2,
+                          ),
+                          dialBackgroundColor: isDark
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade100,
+                          dialTextColor: isDark ? Colors.white : Colors.black87,
+                          entryModeIconColor: AppColors.primaryPurple,
+                          helpTextStyle: TextStyle(
+                            fontSize: 14,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                          hourMinuteTextStyle: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                      child: child!,
+                    );
+                  },
                 );
                 if (picked != null) {
                   setState(() => departureTod = picked);
