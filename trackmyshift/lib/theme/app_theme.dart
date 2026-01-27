@@ -91,12 +91,12 @@ class AppTheme {
         brightness: Brightness.dark,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
+        backgroundColor: _darkPrimaryColor,
+        surfaceTintColor: _darkPrimaryColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: _lightPrimaryColor),
         titleTextStyle: const TextStyle(
-          color: Colors.black87,
+          color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),

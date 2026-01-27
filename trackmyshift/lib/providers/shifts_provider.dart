@@ -210,13 +210,30 @@ class ShiftsProvider extends ChangeNotifier {
     return map;
   }
 
+  // Validate if a key is in valid date format (yyyy-MM-dd)
+  bool _isValidDateKey(String key) {
+    if (key.isEmpty) return false;
+    final parts = key.split('-');
+    if (parts.length != 3) return false;
+    final year = int.tryParse(parts[0]);
+    final month = int.tryParse(parts[1]);
+    final day = int.tryParse(parts[2]);
+    if (year == null || month == null || day == null) return false;
+    if (year < 2000 || year > 2100) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    return true;
+  }
+
   // Group shifts by month key 'yyyy-MM'
   Map<String, List<MapEntry<String, Shift>>> groupByMonth() {
     final Map<String, List<MapEntry<String, Shift>>> out = {};
     final entries = _shifts.entries.toList()
       ..sort((a, b) => b.key.compareTo(a.key));
     for (final e in entries) {
-      final dt = DateTime.parse(e.key);
+      if (!_isValidDateKey(e.key)) continue;
+      final dt = DateTime.tryParse(e.key);
+      if (dt == null) continue;
       final monthKey =
           '${dt.year.toString().padLeft(4, '0')}-'
           '${dt.month.toString().padLeft(2, '0')}';
@@ -232,12 +249,14 @@ class ShiftsProvider extends ChangeNotifier {
   ) {
     final Map<String, List<MapEntry<String, Shift>>> out = {};
     final entries = _shifts.entries.where((e) {
-      final dt = DateTime.parse(e.key);
-      return dt.year == year && dt.month == month;
+      if (!_isValidDateKey(e.key)) return false;
+      final dt = DateTime.tryParse(e.key);
+      return dt != null && dt.year == year && dt.month == month;
     }).toList()..sort((a, b) => a.key.compareTo(b.key));
 
     for (final e in entries) {
-      final dt = DateTime.parse(e.key);
+      final dt = DateTime.tryParse(e.key);
+      if (dt == null) continue;
       final weekStart = _weekStart(dt);
       final weekKey = _dateKey(weekStart);
       out.putIfAbsent(weekKey, () => []).add(e);
@@ -251,7 +270,8 @@ class ShiftsProvider extends ChangeNotifier {
     final entries = _shifts.entries.toList()
       ..sort((a, b) => b.key.compareTo(a.key));
     for (final e in entries) {
-      final dt = DateTime.parse(e.key);
+      final dt = DateTime.tryParse(e.key);
+      if (dt == null) continue;
       final weekStart = _weekStart(dt);
       final weekKey = _dateKey(weekStart);
       out.putIfAbsent(weekKey, () => []).add(e);
@@ -279,7 +299,8 @@ class ShiftsProvider extends ChangeNotifier {
           json.decode(jsonStr) as Map<String, dynamic>;
       _shifts.clear();
       decoded.forEach((key, value) {
-        if (value is Map<String, dynamic>) {
+        // Only load valid date keys
+        if (_isValidDateKey(key) && value is Map<String, dynamic>) {
           _shifts[key] = Shift.fromJson(value);
         }
       });
@@ -291,7 +312,9 @@ class ShiftsProvider extends ChangeNotifier {
               json.decode(paidStr) as Map<String, dynamic>;
           _weekPaid.clear();
           paidDecoded.forEach((k, v) {
-            _weekPaid[k] = v == true || v == 'true' || v == 1;
+            if (_isValidDateKey(k)) {
+              _weekPaid[k] = v == true || v == 'true' || v == 1;
+            }
           });
         } catch (_) {
           // ignore paid parse
