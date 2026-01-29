@@ -37,34 +37,50 @@ class ShiftsProvider extends ChangeNotifier {
     _firestore = null;
 
     if (uid == null) {
-      // nothing to sync
+      // Logged out: clear local data
+      _shifts.clear();
+      _weekPaid.clear();
+      await _saveToPrefs();
+      notifyListeners();
       return;
     }
 
     _firestore = FirestoreService();
 
-    // First: migrate local prefs to Firestore if there is data locally
-    if (_shifts.isNotEmpty) {
-      for (final e in _shifts.entries) {
-        await _firestore!.uploadShift(uid, e.key, e.value);
-      }
-    }
-    if (_weekPaid.isNotEmpty) {
-      await _firestore!.setWeekPaidMap(uid, _weekPaid);
-    }
+    // Keep a snapshot of local data before merging with Firestore
+    final localShifts = Map<String, Shift>.from(_shifts);
+    final localPaid = Map<String, bool>.from(_weekPaid);
 
-    // Listen to remote shifts and merge
+    // Clear current data - will be repopulated from Firestore + local
+    _shifts.clear();
+    _weekPaid.clear();
+
+    // Listen to remote shifts for the new user
     _shiftsSub = _firestore!.listenShifts(uid).listen((remoteList) {
       var updated = false;
+      final Map<String, Shift> remoteMap = {};
+
       for (final e in remoteList) {
         final key = e.key;
         final shift = e.value;
+        remoteMap[key] = shift;
         final local = _shifts[key];
         if (local == null || local != shift) {
           _shifts[key] = shift;
           updated = true;
         }
       }
+
+      // Migrate any local-only data to Firestore
+      for (final e in localShifts.entries) {
+        if (!remoteMap.containsKey(e.key)) {
+          // This data exists locally but not on Firestore - upload it
+          _shifts[e.key] = e.value;
+          unawaited(_firestore!.uploadShift(uid, e.key, e.value));
+          updated = true;
+        }
+      }
+
       if (updated) {
         _saveToPrefs();
         notifyListeners();
@@ -72,9 +88,22 @@ class ShiftsProvider extends ChangeNotifier {
     });
 
     _paidSub = _firestore!.listenWeekPaid(uid).listen((map) {
+      var updated = false;
       _weekPaid.clear();
       _weekPaid.addAll(map);
-      _saveToPrefs();
+
+      // Migrate any local-only week paid data to Firestore
+      for (final e in localPaid.entries) {
+        if (!map.containsKey(e.key)) {
+          _weekPaid[e.key] = e.value;
+          updated = true;
+        }
+      }
+
+      if (updated) {
+        _saveToPrefs();
+      }
+
       notifyListeners();
     });
   }

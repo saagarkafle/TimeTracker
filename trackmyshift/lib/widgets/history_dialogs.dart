@@ -40,48 +40,15 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
               'Arrival',
               arrivalTod,
               () async {
-                final picked = await showTimePicker(
+                showModalBottomSheet(
                   context: context,
-                  initialTime: arrivalTod ?? TimeOfDay.now(),
-                  useRootNavigator: false,
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        timePickerTheme: TimePickerThemeData(
-                          backgroundColor: isDark
-                              ? Colors.grey.shade900
-                              : Colors.white,
-                          dayPeriodTextColor: isDark
-                              ? Colors.white
-                              : Colors.black87,
-                          dayPeriodColor: AppColors.primaryPurple.withValues(
-                            alpha: 0.2,
-                          ),
-                          dialBackgroundColor: isDark
-                              ? Colors.grey.shade800
-                              : Colors.grey.shade100,
-                          dialTextColor: isDark ? Colors.white : Colors.black87,
-                          entryModeIconColor: AppColors.primaryPurple,
-                          helpTextStyle: TextStyle(
-                            fontSize: 14,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                          hourMinuteTextStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
+                  builder: (context) => CustomTimePickerWidget(
+                    initialTime: arrivalTod ?? TimeOfDay.now(),
+                    onTimeChanged: (picked) {
+                      setState(() => arrivalTod = picked);
+                    },
+                  ),
                 );
-                if (picked != null) {
-                  setState(() => arrivalTod = picked);
-                }
               },
               () => setState(() => arrivalTod = null),
               isDark,
@@ -91,48 +58,15 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
               'Departure',
               departureTod,
               () async {
-                final picked = await showTimePicker(
+                showModalBottomSheet(
                   context: context,
-                  initialTime: departureTod ?? TimeOfDay.now(),
-                  useRootNavigator: false,
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        timePickerTheme: TimePickerThemeData(
-                          backgroundColor: isDark
-                              ? Colors.grey.shade900
-                              : Colors.white,
-                          dayPeriodTextColor: isDark
-                              ? Colors.white
-                              : Colors.black87,
-                          dayPeriodColor: AppColors.primaryPurple.withValues(
-                            alpha: 0.2,
-                          ),
-                          dialBackgroundColor: isDark
-                              ? Colors.grey.shade800
-                              : Colors.grey.shade100,
-                          dialTextColor: isDark ? Colors.white : Colors.black87,
-                          entryModeIconColor: AppColors.primaryPurple,
-                          helpTextStyle: TextStyle(
-                            fontSize: 14,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                          hourMinuteTextStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
+                  builder: (context) => CustomTimePickerWidget(
+                    initialTime: departureTod ?? TimeOfDay.now(),
+                    onTimeChanged: (picked) {
+                      setState(() => departureTod = picked);
+                    },
+                  ),
                 );
-                if (picked != null) {
-                  setState(() => departureTod = picked);
-                }
               },
               () => setState(() => departureTod = null),
               isDark,
@@ -329,48 +263,21 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
               'Arrival',
               arrivalTod,
               () async {
-                final picked = await showTimePicker(
+                showDialog(
                   context: context,
-                  initialTime: arrivalTod ?? TimeOfDay.now(),
-                  useRootNavigator: false,
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        timePickerTheme: TimePickerThemeData(
-                          backgroundColor: isDark
-                              ? Colors.grey.shade900
-                              : Colors.white,
-                          dayPeriodTextColor: isDark
-                              ? Colors.white
-                              : Colors.black87,
-                          dayPeriodColor: AppColors.primaryPurple.withValues(
-                            alpha: 0.2,
-                          ),
-                          dialBackgroundColor: isDark
-                              ? Colors.grey.shade800
-                              : Colors.grey.shade100,
-                          dialTextColor: isDark ? Colors.white : Colors.black87,
-                          entryModeIconColor: AppColors.primaryPurple,
-                          helpTextStyle: TextStyle(
-                            fontSize: 14,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                          hourMinuteTextStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
+                  barrierDismissible: false,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: CustomTimePickerWidget(
+                      initialTime: arrivalTod ?? TimeOfDay.now(),
+                      onTimeChanged: (picked) {
+                        setState(() => arrivalTod = picked);
+                      },
+                    ),
+                  ),
                 );
-                if (picked != null) {
-                  setState(() => arrivalTod = picked);
-                }
               },
               () => setState(() => arrivalTod = null),
               isDark,
@@ -380,48 +287,21 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
               'Departure',
               departureTod,
               () async {
-                final picked = await showTimePicker(
+                showDialog(
                   context: context,
-                  initialTime: departureTod ?? TimeOfDay.now(),
-                  useRootNavigator: false,
-                  builder: (context, child) {
-                    return Theme(
-                      data: Theme.of(context).copyWith(
-                        timePickerTheme: TimePickerThemeData(
-                          backgroundColor: isDark
-                              ? Colors.grey.shade900
-                              : Colors.white,
-                          dayPeriodTextColor: isDark
-                              ? Colors.white
-                              : Colors.black87,
-                          dayPeriodColor: AppColors.primaryPurple.withValues(
-                            alpha: 0.2,
-                          ),
-                          dialBackgroundColor: isDark
-                              ? Colors.grey.shade800
-                              : Colors.grey.shade100,
-                          dialTextColor: isDark ? Colors.white : Colors.black87,
-                          entryModeIconColor: AppColors.primaryPurple,
-                          helpTextStyle: TextStyle(
-                            fontSize: 14,
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                          hourMinuteTextStyle: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                      child: child!,
-                    );
-                  },
+                  barrierDismissible: false,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: CustomTimePickerWidget(
+                      initialTime: departureTod ?? TimeOfDay.now(),
+                      onTimeChanged: (picked) {
+                        setState(() => departureTod = picked);
+                      },
+                    ),
+                  ),
                 );
-                if (picked != null) {
-                  setState(() => departureTod = picked);
-                }
               },
               () => setState(() => departureTod = null),
               isDark,
@@ -520,6 +400,212 @@ class _EditTimeDialogState extends State<EditTimeDialog> {
                   ),
                 ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Custom scrollable time picker widget
+class CustomTimePickerWidget extends StatefulWidget {
+  final TimeOfDay? initialTime;
+  final Function(TimeOfDay) onTimeChanged;
+
+  const CustomTimePickerWidget({
+    super.key,
+    this.initialTime,
+    required this.onTimeChanged,
+  });
+
+  @override
+  State<CustomTimePickerWidget> createState() => _CustomTimePickerWidgetState();
+}
+
+class _CustomTimePickerWidgetState extends State<CustomTimePickerWidget> {
+  late FixedExtentScrollController hourController;
+  late FixedExtentScrollController minuteController;
+  late FixedExtentScrollController periodController;
+
+  late int selectedHour;
+  late int selectedMinute;
+  late bool isAM;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = widget.initialTime ?? TimeOfDay.now();
+    selectedHour = now.hour > 12
+        ? now.hour - 12
+        : (now.hour == 0 ? 12 : now.hour);
+    selectedMinute = now.minute;
+    isAM = now.hour < 12;
+
+    hourController = FixedExtentScrollController(initialItem: selectedHour - 1);
+    minuteController = FixedExtentScrollController(initialItem: selectedMinute);
+    periodController = FixedExtentScrollController(initialItem: isAM ? 0 : 1);
+  }
+
+  @override
+  void dispose() {
+    hourController.dispose();
+    minuteController.dispose();
+    periodController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      height: 300,
+      color: isDark ? Colors.grey.shade900 : Colors.white,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: AppColors.primaryPurple,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Text(
+                  'Select Time',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final hour = isAM
+                        ? (selectedHour == 12 ? 0 : selectedHour)
+                        : (selectedHour == 12 ? 12 : selectedHour + 12);
+                    widget.onTimeChanged(
+                      TimeOfDay(hour: hour, minute: selectedMinute),
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Done',
+                    style: TextStyle(
+                      color: AppColors.primaryPurple,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Hour Picker
+                Expanded(
+                  child: ListWheelScrollView(
+                    controller: hourController,
+                    itemExtent: 50,
+                    diameterRatio: 1.2,
+                    physics: const FixedExtentScrollPhysics(),
+                    onSelectedItemChanged: (int index) {
+                      setState(() => selectedHour = index + 1);
+                    },
+                    children: List<Widget>.generate(12, (int index) {
+                      return Center(
+                        child: Text(
+                          '${index + 1}'.padLeft(2, '0'),
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                Text(
+                  ':',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                // Minute Picker
+                Expanded(
+                  child: ListWheelScrollView(
+                    controller: minuteController,
+                    itemExtent: 50,
+                    diameterRatio: 1.2,
+                    physics: const FixedExtentScrollPhysics(),
+                    onSelectedItemChanged: (int index) {
+                      setState(() => selectedMinute = index);
+                    },
+                    children: List<Widget>.generate(60, (int index) {
+                      return Center(
+                        child: Text(
+                          index.toString().padLeft(2, '0'),
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // AM/PM Picker
+                Expanded(
+                  child: ListWheelScrollView(
+                    controller: periodController,
+                    itemExtent: 50,
+                    diameterRatio: 1.2,
+                    physics: const FixedExtentScrollPhysics(),
+                    onSelectedItemChanged: (int index) {
+                      setState(() => isAM = index == 0);
+                    },
+                    children: [
+                      Center(
+                        child: Text(
+                          'AM',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          'PM',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

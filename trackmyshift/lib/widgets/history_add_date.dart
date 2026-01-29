@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/shifts_provider.dart';
 import '../utils/formatters.dart';
+import 'history_dialogs.dart';
 
 class HistoryAddDate extends StatelessWidget {
   const HistoryAddDate({super.key});
@@ -66,66 +67,21 @@ class HistoryAddDate extends StatelessWidget {
                                     IconButton(
                                       icon: const Icon(Icons.edit),
                                       onPressed: () async {
-                                        final now = DateTime.now();
-                                        final isDark =
-                                            Theme.of(ctx).brightness ==
-                                            Brightness.dark;
-                                        final pickedTime = await showTimePicker(
+                                        showModalBottomSheet(
                                           context: ctx,
-                                          initialTime:
-                                              arrivalTod ??
-                                              TimeOfDay.fromDateTime(now),
-                                          useRootNavigator: false,
-                                          builder: (context, child) {
-                                            return Theme(
-                                              data: Theme.of(context).copyWith(
-                                                timePickerTheme: TimePickerThemeData(
-                                                  backgroundColor: isDark
-                                                      ? Colors.grey.shade900
-                                                      : Colors.white,
-                                                  dayPeriodTextColor: isDark
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                                  dayPeriodColor: const Color(
-                                                    0xFF667eea,
-                                                  ).withValues(alpha: 0.2),
-                                                  dialBackgroundColor: isDark
-                                                      ? Colors.grey.shade800
-                                                      : Colors.grey.shade100,
-                                                  dialTextColor: isDark
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                                  entryModeIconColor:
-                                                      const Color(0xFF667eea),
-                                                  helpTextStyle: TextStyle(
-                                                    fontSize: 14,
-                                                    color: isDark
-                                                        ? Colors.white
-                                                        : Colors.black87,
-                                                  ),
-                                                  hourMinuteTextStyle:
-                                                      const TextStyle(
-                                                        fontSize: 36,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                ),
+                                          builder: (context) =>
+                                              CustomTimePickerWidget(
+                                                initialTime:
+                                                    arrivalTod ??
+                                                    TimeOfDay.now(),
+                                                onTimeChanged: (pickedTime) {
+                                                  setState(
+                                                    () =>
+                                                        arrivalTod = pickedTime,
+                                                  );
+                                                },
                                               ),
-                                              child: child!,
-                                            );
-                                          },
                                         );
-                                        if (pickedTime != null) {
-                                          setState(
-                                            () => arrivalTod = pickedTime,
-                                          );
-                                        }
                                       },
                                     ),
                                     if (arrivalTod != null)
@@ -148,66 +104,21 @@ class HistoryAddDate extends StatelessWidget {
                                     IconButton(
                                       icon: const Icon(Icons.edit),
                                       onPressed: () async {
-                                        final now = DateTime.now();
-                                        final isDark =
-                                            Theme.of(ctx).brightness ==
-                                            Brightness.dark;
-                                        final pickedTime = await showTimePicker(
+                                        showModalBottomSheet(
                                           context: ctx,
-                                          initialTime:
-                                              departureTod ??
-                                              TimeOfDay.fromDateTime(now),
-                                          useRootNavigator: false,
-                                          builder: (context, child) {
-                                            return Theme(
-                                              data: Theme.of(context).copyWith(
-                                                timePickerTheme: TimePickerThemeData(
-                                                  backgroundColor: isDark
-                                                      ? Colors.grey.shade900
-                                                      : Colors.white,
-                                                  dayPeriodTextColor: isDark
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                                  dayPeriodColor: const Color(
-                                                    0xFF667eea,
-                                                  ).withValues(alpha: 0.2),
-                                                  dialBackgroundColor: isDark
-                                                      ? Colors.grey.shade800
-                                                      : Colors.grey.shade100,
-                                                  dialTextColor: isDark
-                                                      ? Colors.white
-                                                      : Colors.black87,
-                                                  entryModeIconColor:
-                                                      const Color(0xFF667eea),
-                                                  helpTextStyle: TextStyle(
-                                                    fontSize: 14,
-                                                    color: isDark
-                                                        ? Colors.white
-                                                        : Colors.black87,
-                                                  ),
-                                                  hourMinuteTextStyle:
-                                                      const TextStyle(
-                                                        fontSize: 36,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                ),
+                                          builder: (context) =>
+                                              CustomTimePickerWidget(
+                                                initialTime:
+                                                    departureTod ??
+                                                    TimeOfDay.now(),
+                                                onTimeChanged: (pickedTime) {
+                                                  setState(
+                                                    () => departureTod =
+                                                        pickedTime,
+                                                  );
+                                                },
                                               ),
-                                              child: child!,
-                                            );
-                                          },
                                         );
-                                        if (pickedTime != null) {
-                                          setState(
-                                            () => departureTod = pickedTime,
-                                          );
-                                        }
                                       },
                                     ),
                                     if (departureTod != null)
