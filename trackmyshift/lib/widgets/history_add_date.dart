@@ -67,20 +67,24 @@ class HistoryAddDate extends StatelessWidget {
                                     IconButton(
                                       icon: const Icon(Icons.edit),
                                       onPressed: () async {
-                                        showModalBottomSheet(
+                                        showDialog(
                                           context: ctx,
-                                          builder: (context) =>
-                                              CustomTimePickerWidget(
-                                                initialTime:
-                                                    arrivalTod ??
-                                                    TimeOfDay.now(),
-                                                onTimeChanged: (pickedTime) {
-                                                  setState(
-                                                    () =>
-                                                        arrivalTod = pickedTime,
-                                                  );
-                                                },
-                                              ),
+                                          barrierDismissible: false,
+                                          builder: (context) => Dialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: CustomTimePickerWidget(
+                                              initialTime:
+                                                  arrivalTod ?? TimeOfDay.now(),
+                                              onTimeChanged: (pickedTime) {
+                                                setState(
+                                                  () => arrivalTod = pickedTime,
+                                                );
+                                              },
+                                            ),
+                                          ),
                                         );
                                       },
                                     ),
@@ -104,20 +108,26 @@ class HistoryAddDate extends StatelessWidget {
                                     IconButton(
                                       icon: const Icon(Icons.edit),
                                       onPressed: () async {
-                                        showModalBottomSheet(
+                                        showDialog(
                                           context: ctx,
-                                          builder: (context) =>
-                                              CustomTimePickerWidget(
-                                                initialTime:
-                                                    departureTod ??
-                                                    TimeOfDay.now(),
-                                                onTimeChanged: (pickedTime) {
-                                                  setState(
-                                                    () => departureTod =
-                                                        pickedTime,
-                                                  );
-                                                },
-                                              ),
+                                          barrierDismissible: false,
+                                          builder: (context) => Dialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: CustomTimePickerWidget(
+                                              initialTime:
+                                                  departureTod ??
+                                                  TimeOfDay.now(),
+                                              onTimeChanged: (pickedTime) {
+                                                setState(
+                                                  () =>
+                                                      departureTod = pickedTime,
+                                                );
+                                              },
+                                            ),
+                                          ),
                                         );
                                       },
                                     ),

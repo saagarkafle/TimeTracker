@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -75,5 +76,41 @@ class AuthService extends ChangeNotifier {
     try {
       await _googleSignIn.signOut();
     } catch (_) {}
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      // Delete Firestore data first
+      if (user != null) {
+        // Delete user's shifts collection
+        final db = FirebaseFirestore.instance;
+        final shiftsQuery = await db
+            .collection('users')
+            .doc(user!.uid)
+            .collection('shifts')
+            .get();
+        for (final doc in shiftsQuery.docs) {
+          await doc.reference.delete();
+        }
+
+        // Delete user's metadata
+        final metaQuery = await db
+            .collection('users')
+            .doc(user!.uid)
+            .collection('meta')
+            .get();
+        for (final doc in metaQuery.docs) {
+          await doc.reference.delete();
+        }
+
+        // Delete user document
+        await db.collection('users').doc(user!.uid).delete();
+      }
+
+      // Delete Firebase Auth user
+      await user?.delete();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

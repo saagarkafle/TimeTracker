@@ -40,13 +40,19 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
               'Arrival',
               arrivalTod,
               () async {
-                showModalBottomSheet(
+                showDialog(
                   context: context,
-                  builder: (context) => CustomTimePickerWidget(
-                    initialTime: arrivalTod ?? TimeOfDay.now(),
-                    onTimeChanged: (picked) {
-                      setState(() => arrivalTod = picked);
-                    },
+                  barrierDismissible: false,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: CustomTimePickerWidget(
+                      initialTime: arrivalTod ?? TimeOfDay.now(),
+                      onTimeChanged: (picked) {
+                        setState(() => arrivalTod = picked);
+                      },
+                    ),
                   ),
                 );
               },
@@ -58,13 +64,19 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
               'Departure',
               departureTod,
               () async {
-                showModalBottomSheet(
+                showDialog(
                   context: context,
-                  builder: (context) => CustomTimePickerWidget(
-                    initialTime: departureTod ?? TimeOfDay.now(),
-                    onTimeChanged: (picked) {
-                      setState(() => departureTod = picked);
-                    },
+                  barrierDismissible: false,
+                  builder: (context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: CustomTimePickerWidget(
+                      initialTime: departureTod ?? TimeOfDay.now(),
+                      onTimeChanged: (picked) {
+                        setState(() => departureTod = picked);
+                      },
+                    ),
                   ),
                 );
               },
