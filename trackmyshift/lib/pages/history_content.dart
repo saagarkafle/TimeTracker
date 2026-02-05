@@ -14,7 +14,8 @@ class HistoryContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ShiftsProvider>();
-    final grouped = provider.groupByMonth();
+    final upcomingGrouped = provider.groupUpcomingByMonth();
+    final pastGrouped = provider.groupPastByMonth();
 
     final now = DateTime.now();
     final currentWeekStart = DateTime(
@@ -27,64 +28,73 @@ class HistoryContent extends StatelessWidget {
         '${currentWeekStart.month.toString().padLeft(2, '0')}-'
         '${currentWeekStart.day.toString().padLeft(2, '0')}';
 
-    final sortedMonths = grouped.entries.toList()
+    final sortedUpcoming = upcomingGrouped.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    final sortedPast = pastGrouped.entries.toList()
       ..sort((a, b) => b.key.compareTo(a.key));
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('History'),
-        elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(
-              child: GestureDetector(
-                onTap: () => _showAddTimeDialog(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryPurple.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: const [
-                      Icon(Icons.add, color: AppColors.primaryPurple),
-                      SizedBox(width: 4),
-                      Text(
-                        'Add',
-                        style: TextStyle(
-                          color: AppColors.primaryPurple,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: grouped.isEmpty
-          ? _buildEmptyState(context)
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: sortedMonths.length,
-              itemBuilder: (context, idx) {
-                final monthKey = sortedMonths[idx].key;
-                final monthDays = sortedMonths[idx].value;
+    final hasUpcoming = sortedUpcoming.isNotEmpty;
+    final hasPast = sortedPast.isNotEmpty;
 
-                return _buildMonthSection(
-                  context,
-                  monthKey,
-                  monthDays,
-                  currentWeekKey,
-                  provider,
-                );
-              },
+    return Scaffold(
+      appBar: AppBar(elevation: 0, toolbarHeight: 0),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTimeDialog(context),
+        backgroundColor: AppColors.primaryPurple,
+        child: const Icon(Icons.add),
+      ),
+      body: !hasUpcoming && !hasPast
+          ? _buildEmptyState(context)
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // Upcoming Shifts Section
+                if (hasUpcoming) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 12),
+                    child: Text(
+                      'Upcoming Shifts',
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryPurple,
+                          ),
+                    ),
+                  ),
+                  ...sortedUpcoming.map((monthEntry) {
+                    return _buildMonthSection(
+                      context,
+                      monthEntry.key,
+                      monthEntry.value,
+                      currentWeekKey,
+                      provider,
+                    );
+                  }),
+                ],
+
+                // Divider
+                if (hasUpcoming && hasPast)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: Divider(
+                      height: 1,
+                      color: Colors.grey.withValues(alpha: 0.3),
+                    ),
+                  ),
+
+                // Past Shifts Section
+                if (hasPast) ...[
+                  ...sortedPast.map((monthEntry) {
+                    return _buildMonthSection(
+                      context,
+                      monthEntry.key,
+                      monthEntry.value,
+                      currentWeekKey,
+                      provider,
+                    );
+                  }),
+                ],
+              ],
             ),
     );
   }
