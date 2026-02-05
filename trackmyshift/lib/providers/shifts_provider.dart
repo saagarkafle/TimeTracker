@@ -47,13 +47,12 @@ class ShiftsProvider extends ChangeNotifier {
 
     _firestore = FirestoreService();
 
-    // Keep a snapshot of local data before merging with Firestore
+    // Keep a snapshot of local data BEFORE clearing
     final localShifts = Map<String, Shift>.from(_shifts);
     final localPaid = Map<String, bool>.from(_weekPaid);
 
-    // Clear current data - will be repopulated from Firestore + local
-    _shifts.clear();
-    _weekPaid.clear();
+    // Do NOT clear data here - wait for Firestore to populate first
+    // This prevents data loss if there's a network delay or Firestore is empty
 
     // Listen to remote shifts for the new user
     _shiftsSub = _firestore!.listenShifts(uid).listen((remoteList) {
@@ -71,10 +70,10 @@ class ShiftsProvider extends ChangeNotifier {
         }
       }
 
-      // Migrate any local-only data to Firestore
+      // Merge local-only data (data recorded before syncing) into the map
       for (final e in localShifts.entries) {
         if (!remoteMap.containsKey(e.key)) {
-          // This data exists locally but not on Firestore - upload it
+          // This data exists locally but not on Firestore - keep it and upload
           _shifts[e.key] = e.value;
           unawaited(_firestore!.uploadShift(uid, e.key, e.value));
           updated = true;
@@ -89,15 +88,24 @@ class ShiftsProvider extends ChangeNotifier {
 
     _paidSub = _firestore!.listenWeekPaid(uid).listen((map) {
       var updated = false;
-      _weekPaid.clear();
-      _weekPaid.addAll(map);
 
-      // Migrate any local-only week paid data to Firestore
+      // Merge remote data with existing local data instead of clearing
+      final remoteMap = Map<String, bool>.from(map);
+
+      // Add any local-only week paid data
       for (final e in localPaid.entries) {
-        if (!map.containsKey(e.key)) {
-          _weekPaid[e.key] = e.value;
+        if (!remoteMap.containsKey(e.key)) {
+          remoteMap[e.key] = e.value;
           updated = true;
         }
+      }
+
+      // Update _weekPaid only if something changed
+      if (remoteMap.length != _weekPaid.length ||
+          !remoteMap.entries.every((e) => _weekPaid[e.key] == e.value)) {
+        _weekPaid.clear();
+        _weekPaid.addAll(remoteMap);
+        updated = true;
       }
 
       if (updated) {
@@ -237,6 +245,66 @@ class ShiftsProvider extends ChangeNotifier {
       _shifts.entries.toList()..sort((a, b) => b.key.compareTo(a.key)),
     );
     return map;
+  }
+
+  // Get past shifts (before today)
+  Map<String, Shift> get pastShifts {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final map = Map<String, Shift>.fromEntries(
+      _shifts.entries.where((e) {
+        final dt = DateTime.tryParse(e.key);
+        return dt != null && dt.isBefore(today);
+      }).toList()..sort((a, b) => b.key.compareTo(a.key)),
+    );
+    return map;
+  }
+
+  // Get upcoming shifts (today and future)
+  Map<String, Shift> get upcomingShifts {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final map = Map<String, Shift>.fromEntries(
+      _shifts.entries.where((e) {
+        final dt = DateTime.tryParse(e.key);
+        return dt != null && !dt.isBefore(today);
+      }).toList()..sort((a, b) => a.key.compareTo(b.key)),
+    );
+    return map;
+  }
+
+  // Group past shifts by month (for history view)
+  Map<String, List<MapEntry<String, Shift>>> groupPastByMonth() {
+    final Map<String, List<MapEntry<String, Shift>>> out = {};
+    final entries = pastShifts.entries.toList()
+      ..sort((a, b) => b.key.compareTo(a.key));
+    for (final e in entries) {
+      if (!_isValidDateKey(e.key)) continue;
+      final dt = DateTime.tryParse(e.key);
+      if (dt == null) continue;
+      final monthKey =
+          '${dt.year.toString().padLeft(4, '0')}-'
+          '${dt.month.toString().padLeft(2, '0')}';
+      out.putIfAbsent(monthKey, () => []).add(e);
+    }
+    return out;
+  }
+
+  // Group upcoming shifts by month
+  Map<String, List<MapEntry<String, Shift>>> groupUpcomingByMonth() {
+    final Map<String, List<MapEntry<String, Shift>>> out = {};
+    final entries = upcomingShifts.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    for (final e in entries) {
+      if (!_isValidDateKey(e.key)) continue;
+      final dt = DateTime.tryParse(e.key);
+      if (dt == null) continue;
+      final monthKey =
+          '${dt.year.toString().padLeft(4, '0')}-'
+          '${dt.month.toString().padLeft(2, '0')}';
+      out.putIfAbsent(monthKey, () => []).add(e);
+    }
+    return out;
   }
 
   // Validate if a key is in valid date format (yyyy-MM-dd)

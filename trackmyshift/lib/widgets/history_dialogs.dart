@@ -159,7 +159,7 @@ class _AddTimeDialogState extends State<AddTimeDialog> {
                 context: context,
                 initialDate: selectedDate,
                 firstDate: DateTime(2020),
-                lastDate: DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 365)),
               );
               if (picked != null) {
                 setState(() => selectedDate = picked);
